@@ -33,6 +33,3 @@ function main(r::Robot)
     marktoborder_with_exceptions!(r, counter)
     gotobegin!(r)
 end
-
-r=Robot(animate=true)
-main(r)
