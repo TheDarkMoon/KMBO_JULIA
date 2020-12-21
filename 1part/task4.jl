@@ -1,35 +1,61 @@
-function gotobegin!(r)
-    gotoborder!(r, West)
-    gotoborder!(r, Sud)
+function inverseSide(side::HorizonSide)
+    return HorizonSide(mod(Int(side)+2, 4))
 end
-function gotoborder!(r, side)
-    while(!isborder(r, side))
-        move!(r, side)
-    end
-end
-function marktoborder!(r, side)
-    while(!isborder(r, side))
-        putmarker!(r)
-        move!(r, side)
-    end
-    putmarker!(r)
-end
-function marktoborder_with_exceptions!(r, counter)
-    gotoborder!(r, Ost)
-    while(counter > 0)
-        move!(r, West)
-        counter = counter - 1
-    end
-    marktoborder!(r, West)
-end
+
 function main(r::Robot)
-    gotobegin!(r)
-    counter = 0
-    while(!isborder(r, Nord))
-        marktoborder_with_exceptions!(r, counter)
-        counter = counter + 1
-        move!(r, Nord)
+    stepsToWest = moveSide(r, West)
+    stepsToNord = moveSide(r, Sud)
+
+    counter = moveSide(r, Ost)
+    moveSide(r, West)
+
+    while true
+        putmarker!(r)
+        moveSideByCount(r, Ost, counter)
+        moveSide(r, West)
+        if isborder(r, Nord) == true
+            break
+        end
+
+        moveStep(r, Nord, false)
+        counter -= 1
     end
-    marktoborder_with_exceptions!(r, counter)
-    gotobegin!(r)
+
+    moveSide(r, West)
+    moveSide(r, Sud)
+
+    followByCount(r, Ost, stepsToWest)
+    followByCount(r, Nord, stepsToNord)
+end
+
+function moveSide(r::Robot, side::HorizonSide, needMark=false)
+    steps = 0
+    while isborder(r, side) != true
+        moveStep(r, side, needMark)
+        steps += 1
+    end
+    return steps
+end
+
+function moveSideByCount(r::Robot, side::HorizonSide, count)
+    for i in 1:count
+        if isborder(r, side) != true
+            moveStep(r, side, true)
+        else
+            break
+        end
+    end
+end
+
+function followByCount(r::Robot, side::HorizonSide, count::Int)
+    for i = 0:count-1
+        moveStep(r, side, false)
+    end
+end
+
+function moveStep(r::Robot, side::HorizonSide, needMark::Bool)
+    move!(r, side)
+    if needMark
+        putmarker!(r)
+    end
 end
