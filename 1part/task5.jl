@@ -4,11 +4,8 @@ end
 
 function main(r::Robot)
     goToTheCorner(Sud, West)
-    # Пусть робот окажется в левом верхнеи углу
     goToTheCorner(Nord, West)
-    # Пусть робот окажется в правом верхнеи углу
     goToTheCorner(Nord, Ost)
-    # Пусть робот окажется в правом нижнем углу
     goToTheCorner(Sud, Ost)
 end
 
@@ -27,7 +24,6 @@ function goToTheCorner(side1::HorizonSide, side2::HorizonSide)
 end
 
 function moveSide(r::Robot, side::HorizonSide, needMark=false)
-    # Move untill you find pr
     steps = 0
     while isborder(r, side) != true
         moveStep(r, side, needMark)
@@ -43,7 +39,6 @@ function followByCount(r::Robot, side::HorizonSide, count::Int)
 end
 
 function moveStep(r::Robot, side::HorizonSide, needMark::Bool)
-    # Take step in one direction
     move!(r, side)
     if needMark
         putmarker!(r)
